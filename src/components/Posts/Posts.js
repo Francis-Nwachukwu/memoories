@@ -14,7 +14,7 @@ const Posts = ({ setCurrentId }) => {
     return (
       <h1>
         No search result. Go back to{" "}
-        <a href="http://localhost:3000/posts">All Posts</a>
+        <a href="https://memoories.netlify.app">All Posts</a>
       </h1>
     );
   }
