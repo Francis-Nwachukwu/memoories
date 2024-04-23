@@ -59,6 +59,7 @@ const Auth = () => {
     setShowPassword(false);
   };
   const googleSuccess = (res) => {
+    console.log(res);
     const decoded = jwt_decode(res.credential);
 
     const { email, family_name, given_name, sub, picture, name } = decoded;

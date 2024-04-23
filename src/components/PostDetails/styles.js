@@ -39,6 +39,7 @@ export default makeStyles((theme) => ({
     display: "flex",
     flexWrap: "wrap",
     padding: "20px 0",
+    gap: "8px",
   },
   recommendedPost: {
     width: "300px",
