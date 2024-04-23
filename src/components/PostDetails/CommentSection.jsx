@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 
 import useStyles from "./styles";
 import { commentPost } from "../../actions/posts";
+import { Link } from "react-router-dom";
 
 const CommentSection = ({ post }) => {
   const dispatch = useDispatch();
@@ -13,35 +14,42 @@ const CommentSection = ({ post }) => {
   const commentsRef = useRef();
   const user = JSON.parse(localStorage.getItem("profile"));
 
-  const handleClick = async () => {
-    const finalComment = `${user.result.name}: ${comment}`;
+  const handleClick = () => {
+    const finalComment = `${user?.result?.name}: ${comment}`;
 
-    const newComments = await dispatch(commentPost(finalComment, post._id));
-
-    setComments(newComments);
+    dispatch(commentPost({ finalComment }, post._id)).then(({ data }) =>
+      setComments(data?.comments)
+    );
     setComment("");
 
     commentsRef.current.scrollIntoView({ behavior: "smooth" });
   };
+
   return (
     <div>
       <div className={classes.commentsOuterContainer}>
         <div className={classes.commentsInnerContainer}>
-          <Typography gutterBottom variant="h6">
+          <Typography gutterBottom variant="h5">
             Comments
           </Typography>
           <div>
-            {comments.map((comment, i) => (
-              <Typography key={i} gutterbottom variant="subtitle1">
-                <strong>{comment.split(": ")[0]}:</strong>
-                {comment.split(":")[1]}
+            {comments?.length ? (
+              comments?.map((comment, i) => (
+                <Typography key={i} gutterbottom variant="subtitle1">
+                  <strong>{comment?.split(": ")[0]}:</strong>
+                  {comment?.split(":")[1]}
+                </Typography>
+              ))
+            ) : (
+              <Typography gutterBottom color="textSecondary">
+                No comments for this post.
               </Typography>
-            ))}
+            )}
           </div>
 
           <div ref={commentsRef} />
         </div>
-        {user?.result?.name && (
+        {user?.result?.name ? (
           <div style={{ width: "70%" }}>
             <Typography gutterBottom variant="h6">
               Write a Comment
@@ -64,6 +72,20 @@ const CommentSection = ({ post }) => {
               color="primary"
             >
               Comment
+            </Button>
+          </div>
+        ) : (
+          <div>
+            <Typography gutterBottom color="textSecondary">
+              Sign in to comment on post.
+            </Typography>
+            <Button
+              component={Link}
+              to="/auth"
+              variant="contained"
+              color="primary"
+            >
+              Sign In
             </Button>
           </div>
         )}

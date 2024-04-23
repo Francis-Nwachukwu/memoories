@@ -4,6 +4,10 @@ import {
   Typography,
   CircularProgress,
   Divider,
+  Card,
+  CardContent,
+  CardMedia,
+  ButtonBase,
 } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
@@ -52,7 +56,7 @@ const Postdetails = () => {
     <Paper style={{ padding: "20px", borderRadius: "15px" }} elevation={6}>
       <div className={classes.card}>
         <div className={classes.section}>
-          <Typography variant="h3" component="h2">
+          <Typography variant="h3" className={classes.title} component="h2">
             {post.title}
           </Typography>
           <Typography
@@ -61,7 +65,7 @@ const Postdetails = () => {
             color="textSecondary"
             component="h2"
           >
-            {post.tags.map((tag) => `#${tag} `)}
+            {post?.tags?.map((tag) => `#${tag} `)}
           </Typography>
           <Typography gutterBottom variant="body1" component="p">
             {post.message}
@@ -72,20 +76,19 @@ const Postdetails = () => {
           </Typography>
           <Divider style={{ margin: "20px 0" }} />
           <CommentSection post={post} />
-          <Divider style={{ margin: "20px 0" }} />
         </div>
         <div className={classes.imageSection}>
           <img
             className={classes.media}
             src={
-              post.selectedFile ||
+              post.image ||
               "https://user-images.githubusercontent.com/194400/49531010-48dad180-f8b1-11e8-8d89-1e61320e1d82.png"
             }
             alt={post.title}
           />
         </div>
       </div>
-      {recommendedPosts.length && (
+      {recommendedPosts?.length ? (
         <div className={classes.section}>
           <Divider style={{ margin: "20px 0" }} />
           <Typography gutterBottom variant="h5">
@@ -93,32 +96,79 @@ const Postdetails = () => {
           </Typography>
           <Divider />
           <div className={classes.recommendedPosts}>
-            {recommendedPosts.map(
-              ({ title, message, name, likes, selectedFile, _id }) => (
-                <div
-                  style={{ margin: "20px", cursor: "pointer" }}
+            {recommendedPosts?.map(
+              ({
+                title,
+                message,
+                name,
+                likes,
+                image,
+                _id,
+                createdAt,
+                tags,
+              }) => (
+                <Card
                   onClick={() => openPost(_id)}
                   key={_id}
-                  className={classes.recommendedPost}
+                  className={classes.recommendedCard}
+                  raised
+                  elevation={6}
                 >
-                  <Typography gutterBottom variant="h6">
-                    {title}
-                  </Typography>
-                  <Typography gutterBottom variant="subtitle2">
-                    {name}
-                  </Typography>
-                  <Typography gutterBottom variant="subtitle2">
-                    {message}
-                  </Typography>
-                  <Typography gutterBottom variant="subtitle1">
-                    Likes: {likes.length}
-                  </Typography>
-                  <img src={selectedFile} width="200px" alt={title} />
-                </div>
+                  <ButtonBase className={classes.cardAction} onClick={openPost}>
+                    <CardMedia
+                      className={classes.recommendedMedia}
+                      image={
+                        image ||
+                        "https://user-images.githubusercontent.com/194400/49531010-48dad180-f8b1-11e8-8d89-1e61320e1d82.png"
+                      }
+                      title={title}
+                    />
+                    <div className={classes.overlay}>
+                      <Typography variant="h6">{name}</Typography>
+                      <Typography variant="body2">
+                        {moment(createdAt).fromNow()}
+                      </Typography>
+                    </div>
+                    <div className={classes.details}>
+                      <Typography variant="body2" color="textSecondary">
+                        {tags.map((tag) => `#${tag} `)}
+                      </Typography>
+                    </div>
+                    <Typography
+                      className={classes.recommendedTitle}
+                      variant="h5"
+                      gutterBottom
+                    >
+                      {title}
+                    </Typography>
+                    <CardContent className={classes.cardContent}>
+                      <Typography
+                        variant="body2"
+                        color="textSecondary"
+                        component="p"
+                      >
+                        {message?.length > 200
+                          ? `${message?.substr(0, 200)}...Read more`
+                          : message}
+                      </Typography>
+                    </CardContent>
+                    <Typography
+                      className={classes.likes}
+                      // variant="h5"
+                      gutterBottom
+                    >
+                      Likes : {likes?.length}
+                    </Typography>
+                  </ButtonBase>
+                </Card>
               )
             )}
           </div>
         </div>
+      ) : (
+        <Typography gutterBottom variant="subtitle1">
+          No recommended posts at this time.
+        </Typography>
       )}
     </Paper>
   );

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import FileBase from "react-file-base64";
 import { useDispatch, useSelector } from "react-redux";
+import { styled } from "@mui/material/styles";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
 import { TextField, Button, Typography, Paper } from "@material-ui/core";
 import Alert from "@mui/material/Alert";
@@ -8,12 +9,24 @@ import Alert from "@mui/material/Alert";
 import useStyles from "./styles";
 import { createPost, updatePost } from "../../actions/posts";
 
+const VisuallyHiddenInput = styled("input")({
+  clip: "rect(0 0 0 0)",
+  clipPath: "inset(10%)",
+  height: 1,
+  overflow: "hidden",
+  position: "absolute",
+  bottom: 0,
+  left: 0,
+  whiteSpace: "nowrap",
+  width: 1,
+});
+
 const Form = ({ currentId, setCurrentId }) => {
   const [postData, setPostData] = useState({
     title: "",
     message: "",
     tags: "",
-    selectedFile: "",
+    image: "",
   });
   const [showAlert, setShowAlert] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
@@ -33,26 +46,22 @@ const Form = ({ currentId, setCurrentId }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const formdata = new FormData();
+
+    formdata.append("title", postData?.title);
+    formdata.append("message", postData?.message);
+    formdata.append("tags", postData?.tags);
+    formdata.append("image", postData?.image);
+
     if (currentId === null) {
       dispatch(
-        createPost(
-          {
-            ...postData,
-            name: user?.result?.name,
-          },
-          setShowAlert,
-          setErrorMsg,
-          setAlertSeverity
-        )
+        createPost(formdata, setShowAlert, setErrorMsg, setAlertSeverity)
       );
     } else {
       dispatch(
         updatePost(
           currentId,
-          {
-            ...postData,
-            name: user?.result?.name,
-          },
+          formdata,
           setShowAlert,
           setErrorMsg,
           setAlertSeverity
@@ -69,7 +78,7 @@ const Form = ({ currentId, setCurrentId }) => {
       title: "",
       message: "",
       tags: "",
-      selectedFile: "",
+      image: "",
     });
   };
 
@@ -136,17 +145,40 @@ const Form = ({ currentId, setCurrentId }) => {
           }
         />
         <div className={classes.fileInput}>
-          <FileBase
+          <Button
+            component="label"
+            role={undefined}
+            variant="contained"
+            tabIndex={-1}
+            startIcon={<CloudUploadIcon />}
+          >
+            Upload file
+            <input
+              hidden
+              type="file"
+              onChange={(e) =>
+                setPostData({
+                  ...postData,
+                  image: e.target.files[0],
+                })
+              }
+            />
+            <VisuallyHiddenInput type="file" />
+          </Button>
+          <p>{postData?.image?.name}</p>
+        </div>
+        {/* <div className={classes.fileInput}>
+          <input
+            hidden
             type="file"
-            multiple={false}
-            onDone={({ base64 }) =>
+            onChange={(e) =>
               setPostData({
                 ...postData,
-                selectedFile: base64,
+                image: e.target.files[0],
               })
             }
           />
-        </div>
+        </div> */}
         <Button
           className={classes.buttonSubmit}
           variant="contained"

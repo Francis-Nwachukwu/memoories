@@ -16,7 +16,7 @@ export const getPost = (id) => async (dispatch) => {
   try {
     dispatch({ type: START_LOADING });
     const { data } = await api.fetchPost(id);
-    dispatch({ type: FETCH_POST, payload: data }); // dispatch action of type fetch_all and payload of data
+    dispatch({ type: FETCH_POST, payload: data?.data }); // dispatch action of type fetch_all and payload of data
     dispatch({ type: END_LOADING });
   } catch (err) {
     console.log(err);
@@ -54,7 +54,7 @@ export const createPost =
       dispatch({ type: START_LOADING });
       const { data } = await api.createPost(post);
 
-      dispatch({ type: CREATE, payload: data });
+      dispatch({ type: CREATE, payload: data?.newPost });
       dispatch({ type: END_LOADING });
       setShowAlert(true);
       setErrorMsg("Created post successfully.");
@@ -73,7 +73,7 @@ export const updatePost =
     try {
       const { data } = await api.updatePost(id, post);
 
-      dispatch({ type: UPDATE, payload: data });
+      dispatch({ type: UPDATE, payload: data?.data });
       setShowAlert(true);
       setErrorMsg("Updated post successfully.");
       setAlertSeverity("success");
@@ -110,7 +110,7 @@ export const commentPost = (value, id) => async (dispatch) => {
     const { data } = await api.commentPost(value, id);
 
     dispatch({ type: COMMENT, payload: data });
-    return data.comments;
+    return data;
   } catch (err) {
     console.log(err);
   }

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState } from "react";
 import {
   Avatar,
   Paper,
@@ -12,9 +12,8 @@ import { Alert } from "@mui/material";
 import { GoogleLogin } from "@react-oauth/google";
 import { useNavigate } from "react-router-dom";
 import jwt_decode from "jwt-decode";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { signin, signup } from "../../actions/auth";
-import * as api from "../../api/index";
 
 import Input from "./Input";
 

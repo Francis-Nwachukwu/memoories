@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 
 import {
@@ -53,7 +53,9 @@ const Home = () => {
     if (searchField.trim() || tags) {
       dispatch(getPostsBySearch({ searchField, tags: tags.join(",") }));
       navigate(
-        `/posts/search?searchQuery=${searchField || ""}&tags=${tags.join(",")}`
+        `/posts/search?searchQuery=${searchField || "none"}&tags=${tags.join(
+          ","
+        )}`
       );
     } else {
       navigate("/");
